@@ -128,7 +128,7 @@ CREATE TABLE Metacritic (
     platform VARCHAR(20),
     date VARCHAR(20),
     userscore FLOAT,
-    summary VARCHAR(4000)
+    summary NVARCHAR(6000)
 );
 
 DROP TABLE IF EXISTS GameSales;
