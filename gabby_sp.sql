@@ -40,23 +40,32 @@ CREATE PROCEDURE GetCovidViews (top INT, country VARCHAR(100), startDate DATE, s
 BEGIN
 
 END //
-DELIMITER;
+DELIMITER
+
+
 
 DROP PROCEDURE IF EXISTS GetCovidTwitchStats;
 DELIMITER //
 CREATE PROCEDURE GetCovidTwitchStats(command VARCHAR(15))
 BEGIN
-    SELECT num, abrev, SUBSTRING(month, PATINDEX('%[0-9]%', month), LEN(month)) AS year,
-        CASE @column
-        WHEN 'watchTime' THEN watchTime
-        WHEN 'streamTime' THEN streamTime
-        WHEN 'peakViewers' THEN peakViewers
+    SELECT command;
+    SELECT num, abrev, REGEXP_SUBSTR(month,"[0-9]+") AS year, 
+    CASE command
+        WHEN 'hoursWatched' THEN hoursWatched
         WHEN 'avgViewers' THEN avgViewers
-        WHEN 'followers' THEN followers
-        WHEN 'followersGained' THEN followersGained
-                    ELSE NULL
-        END as selectedColumn
+        WHEN 'peakViewers' THEN peakViewers
+        WHEN 'avgChannels' THEN avgChannels
+        WHEN 'peakChannels' THEN peakChannels
+        WHEN 'hoursStreamed' THEN hoursStreamed
+        WHEN 'gamesStreamed' THEN gamesStreamed
+        WHEN 'activeAffiliates' THEN activeAffiliates
+        WHEN 'activePartners' THEN activePartners
+        ELSE 'ERROR: Invalid Twitch statistic'
+    END AS selected
+    FROM
+    (SELECT *
     FROM TwitchStats JOIN Months 
-    ON TwitchStats.date like concat('%', Months.abrev, '%');
+    ON TwitchStats.month like concat('%', Months.full, '%')) AS twitchMonths;
 END //
-DELIMITER;
+DELIMITER ; 
+CALL GetCovidTwitchStats('hoursWatched');
