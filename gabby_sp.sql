@@ -32,3 +32,31 @@ INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-02-24' ,5.0, 5.
 INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-03-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-02-26' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-04-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
+
+
+DROP PROCEDURE IF EXISTS GetCovidViews;
+DELIMITER //
+CREATE PROCEDURE GetCovidViews (top INT, country VARCHAR(100), startDate DATE, stopDate DATE)
+BEGIN
+
+END //
+DELIMITER;
+
+DROP PROCEDURE IF EXISTS GetCovidTwitchStats;
+DELIMITER //
+CREATE PROCEDURE GetCovidTwitchStats(command VARCHAR(15))
+BEGIN
+    SELECT num, abrev, SUBSTRING(month, PATINDEX('%[0-9]%', month), LEN(month)) AS year,
+        CASE @column
+        WHEN 'watchTime' THEN watchTime
+        WHEN 'streamTime' THEN streamTime
+        WHEN 'peakViewers' THEN peakViewers
+        WHEN 'avgViewers' THEN avgViewers
+        WHEN 'followers' THEN followers
+        WHEN 'followersGained' THEN followersGained
+                    ELSE NULL
+        END as selectedColumn
+    FROM TwitchStats JOIN Months 
+    ON TwitchStats.date like concat('%', Months.abrev, '%');
+END //
+DELIMITER;
