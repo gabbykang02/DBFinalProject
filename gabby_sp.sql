@@ -34,7 +34,7 @@ INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-02-26' ,5.0, 5.
 INSERT INTO CovidData VALUES("AFG", "Asia", "Afghanistan", '2020-04-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 
 
-DROP PROCEDURE IF EXISTS GetCovidViews;
+DROP PROCEDURE IF EXISTS GetCovidGenreViews;
 DELIMITER //
 CREATE PROCEDURE GetCovidViews (top INT, country VARCHAR(100), startDate DATE, stopDate DATE)
 BEGIN
@@ -48,7 +48,6 @@ DROP PROCEDURE IF EXISTS GetCovidTwitchStats;
 DELIMITER //
 CREATE PROCEDURE GetCovidTwitchStats(command VARCHAR(15))
 BEGIN
-    SELECT command;
     SELECT num, abrev, REGEXP_SUBSTR(month,"[0-9]+") AS year, 
     CASE command
         WHEN 'hoursWatched' THEN hoursWatched
