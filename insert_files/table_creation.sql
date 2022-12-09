@@ -21,7 +21,8 @@ CREATE TABLE CovidData(
     median_age FLOAT,
     gdp_per_capita FLOAT,
     life_expectancy FLOAT,
-    population INT
+    population INT,
+    PRIMARY KEY(iso_code, continent, location, dateofdata)
 );
 
 DROP TABLE IF EXISTS TitleInfo;
@@ -34,7 +35,8 @@ CREATE TABLE TitleInfo (
     startYear INT,
     endYear INT,
     runTime INT,
-    genres VARCHAR(100)
+    genres VARCHAR(100),
+    PRIMARY KEY (tconst)
 );
 
 DROP TABLE IF EXISTS TitleTranslated;
@@ -45,14 +47,16 @@ CREATE TABLE TitleTranslated(
     region VARCHAR(20),
     language VARCHAR(20),
     type VARCHAR(20),
-    isOriginalTitle BOOLEAN NOT NULL
+    isOriginalTitle BOOLEAN NOT NULL,
+    PRIMARY KEY (tconst)
 );
 
 DROP TABLE IF EXISTS Crew;
 CREATE TABLE Crew (
     tconst VARCHAR(10) NOT NULL,
     person VARCHAR(4500) NOT NULL,
-    role VARCHAR(4500)
+    role VARCHAR(4500),
+    PRIMARY KEY (tconst)
 );
 
 DROP TABLE IF EXISTS Episodes;
@@ -70,7 +74,8 @@ CREATE TABLE Principals (
     nconst VARCHAR(10) NOT NULL,
     ordering INT,
     job VARCHAR(200),
-    characters VARCHAR(100)
+    characters VARCHAR(100),
+    PRIMARY KEY (tconst)
 );
 
 DROP TABLE IF EXISTS Ratings;
@@ -144,7 +149,8 @@ CREATE TABLE Metacritic (
     platform VARCHAR(20),
     date VARCHAR(20),
     userscore FLOAT,
-    summary NVARCHAR(6000)
+    summary NVARCHAR(6000),
+    PRIMARY KEY(game, platform)
 );
 
 DROP TABLE IF EXISTS Months;
@@ -181,5 +187,6 @@ CREATE TABLE GameSales (
     jpSales INT,
     otherSales INT,
     releaseDate VARCHAR(20),
-    lastUpdate VARCHAR(20)
+    lastUpdate VARCHAR(20),
+    PRIMARY KEY (game, platform)
 );
