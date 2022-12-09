@@ -2,22 +2,26 @@ DROP PROCEDURE IF EXISTS GetMaxCovid;
 DELIMITER // 
 CREATE PROCEDURE GetMaxCovid(country VARCHAR(100))
 BEGIN
-    SELECT baseTable.month, baseTable.year, baseTable.numCases
-    FROM
-            (SELECT month, year, numCases
-            FROM 
-            (SELECT MONTH(CovidData.dateofdata) AS month, YEAR(CovidData.dateofdata) as year, SUM(new_cases) AS numCases
-                FROM CovidData
-                WHERE CovidData.location = country
-                GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS baseTable
-        RIGHT OUTER JOIN
-            (SELECT MAX(numCases) AS max_cases
-            FROM 
+    IF EXISTS(SELECT location FROM CovidData WHERE CovidData.location = country)
+    THEN
+        SELECT baseTable.month, baseTable.year, baseTable.numCases
+        FROM
+                (SELECT month, year, numCases
+                FROM 
                 (SELECT MONTH(CovidData.dateofdata) AS month, YEAR(CovidData.dateofdata) as year, SUM(new_cases) AS numCases
-                FROM CovidData
-                WHERE CovidData.location = country
-                GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS maxTable
-        ON baseTable.numCases = maxTable.max_cases;
+                    FROM CovidData
+                    WHERE CovidData.location = country
+                    GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS baseTable
+            RIGHT OUTER JOIN
+                (SELECT MAX(numCases) AS max_cases
+                FROM 
+                    (SELECT MONTH(CovidData.dateofdata) AS month, YEAR(CovidData.dateofdata) as year, SUM(new_cases) AS numCases
+                    FROM CovidData
+                    WHERE CovidData.location = country
+                    GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS maxTable
+            ON baseTable.numCases = maxTable.max_cases;
+    ELSE SELECT 'ERROR: No data on this country' AS 'Error Message';
+    END IF;
 END //
 DELIMITER ;
 
@@ -48,13 +52,6 @@ BEGIN
     GROUP BY platform;
 END //
 DELIMITER ;
-
-
-INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-02-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
-INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-03-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
-INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-02-26' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
-INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-04-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
-INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2022-03-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 
 
 DROP PROCEDURE IF EXISTS GetStatCumulative;
@@ -90,7 +87,6 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-CALL GetStatCumulative("US", 2, 2020, 3, 2020);
 
 
 
