@@ -89,11 +89,11 @@ CALL GetStatCumulative("US", 2, 2020, 3, 2020);
 
 
 
-DROP PROCEDURE IF EXISTS GetCovidTwitchStats;
+DROP PROCEDURE IF EXISTS GetTwitchStats;
 DELIMITER //
-CREATE PROCEDURE GetCovidTwitchStats(command VARCHAR(15))
+CREATE PROCEDURE GetTwitchStats(command VARCHAR(15))
 BEGIN
-    SELECT num, abrev, REGEXP_SUBSTR(month,"[0-9]+") AS year, 
+    SELECT num, abrev AS month, REGEXP_SUBSTR(month,"[0-9]+") AS year, 
     CASE command
         WHEN 'hoursWatched' THEN hoursWatched
         WHEN 'avgViewers' THEN avgViewers
