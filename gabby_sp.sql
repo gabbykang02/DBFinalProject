@@ -21,38 +21,33 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS GetCovidPlatforms;
+DROP PROCEDURE IF EXISTS getAverageRatings;
 DELIMITER //
-CREATE PROCEDURE GetCovidPlatforms (country VARCHAR(100))
+CREATE PROCEDURE getAverageRatings (year INT)
 BEGIN
-    SELECT platform, SUM(metascore) / COUNT(DISTINCT(game)) AS avg
-    FROM
-        (SELECT baseTable.month, baseTable.year, baseTable.numCases
-        FROM 
-            (SELECT month, year, numCases
-            FROM 
-            (SELECT MONTH(CovidData.dateofdata) AS month, YEAR(CovidData.dateofdata) as year, SUM(new_cases) AS numCases
-                FROM CovidData
-                WHERE CovidData.location = country
-                GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS baseTable
-        RIGHT OUTER JOIN
-            (SELECT MAX(numCases) AS max_cases
-            FROM 
-                (SELECT MONTH(CovidData.dateofdata) AS month, YEAR(CovidData.dateofdata) as year, SUM(new_cases) AS numCases
-                FROM CovidData
-                WHERE CovidData.location = country
-                GROUP BY MONTH(CovidData.dateofdata), YEAR(CovidData.dateofdata)) AS covidCountTable) AS maxTable
-        ON baseTable.numCases = maxTable.max_cases) AS max_date_table,
-    (SELECT num as monthNum, game, platform, metascore, date, REGEXP_SUBSTR(RIGHT(date,4),"[0-9]+") AS year
-    FROM Metacritic JOIN Months 
-    ON Metacritic.date like concat('%', Months.full, '%')) AS meta_date_table
-
-    WHERE meta_date_table.monthNum = max_date_table.month
-        AND meta_date_table.date like concat('%', max_date_table.year, '%')
-    GROUP BY platform;
+    SELECT type, AVG(averageRating) AS avgRating, COUNT(DISTINCT(Ratings.tconst)) AS numberEntries, AVG(runTime) AS avgRunTime
+    FROM TitleInfo JOIN Ratings ON TitleInfo.tconst = Ratings.tconst
+    WHERE startYear = year
+    GROUP BY type;
 END //
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS GetCovidPlatforms;
+DELIMITER //
+CREATE PROCEDURE GetCovidPlatforms (year INT, month INT)
+BEGIN
+    SELECT platform, COUNT(DISTINCT(game)) AS numGamesReleased, SUM(metascore) / COUNT(DISTINCT(game)) AS avgRating
+    FROM
+        (SELECT num as monthNum, game, platform, metascore, date, REGEXP_SUBSTR(RIGHT(date,4),"[0-9]+") AS yearNum
+        FROM Metacritic JOIN Months 
+        ON Metacritic.date like concat('%', Months.full, '%')) AS meta_date_table
+
+    WHERE meta_date_table.monthNum = month
+        AND meta_date_table.yearNum = year
+    GROUP BY platform;
+END //
+DELIMITER ;
 
 
 INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-02-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
