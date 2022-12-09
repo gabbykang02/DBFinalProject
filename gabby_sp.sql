@@ -54,6 +54,7 @@ INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-02-24' ,5.0, 5.0, null, 
 INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-03-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-02-26' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2020-04-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
+INSERT INTO CovidData VALUES("AFG", "Asia", "US", '2022-03-24' ,5.0, 5.0, null, null, null, null, 0.122, 0.122, null, null, null, null, null, 54.422, 18.6, 1803.987, 64.83, 41128772.0);
 
 
 DROP PROCEDURE IF EXISTS GetStatCumulative;
@@ -67,7 +68,7 @@ BEGIN
         WHERE CovidData.location = country AND 
             MONTH(CovidData.dateofdata) >= startMonth AND MONTH(CovidData.dateofdata) <= stopMonth AND
             YEAR(CovidData.dateofdata) >= startYear AND YEAR(CovidData.dateofdata) <= stopYear) AS covidTable
-        RIGHT OUTER JOIN
+        JOIN
         (SELECT num AS months, year, SUM(hoursWatched) AS hoursWatched, SUM(avgViewers) AS avgViewers, SUM(peakViewers) AS peakViewers,
                 SUM(avgChannels) AS avgChannels, SUM(peakChannels) AS peakChannels, SUM(hoursStreamed) AS hoursStreamed, 
                 SUM(gamesStreamed) AS gamesStreamed, SUM(activeAffiliates) AS activeAffiliates, SUM(activePartners) AS activePartners
