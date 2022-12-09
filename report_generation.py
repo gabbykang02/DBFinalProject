@@ -1,8 +1,8 @@
 import os
 import pymysql
 import pandas as pd
-import matplotlib.pyplot as plt
-
+#import matplotlib.pyplot as plt
+import termplotlib as plt
 try:
    import plotly.express as px
 except:
@@ -31,7 +31,7 @@ def plotCumulative(result):
       if (colList[idx] != "dateofdata" and colList[idx] != "yearNum" and colList[idx] != "monthNum" and colList[idx] != "year" and colList[idx] != "month"):
          plt.plot(result[colList[0]], result[colList[idx]])
    plt.legend(colList[1:(len(colList))])
-   plt.show()
+   plt.show(block=True)
 
 # Plot sunburst results
 def plotSunburst(result):
@@ -56,7 +56,7 @@ def printMethods():
     print("- GetAverageRatings(year INT) takes in a year and returns the average rating for film media released in that year.")
     print("- GetCovidPlatforms(year INT, month INT) takes in month/year and returns the average Metacritic rating for games relased in that month.")
     print("- GetStatCumulative(country VARCHAR(100), startMonth INT, startYear INT, stopMonth INT, stopYear INT) takes in a time period (specified by start/stop month/year and a country, plotting COVID cases and twitch stats overtime. The graph display is not interactable with the python script, but is interactable with ipynb")
-    print("- GetCovidStats(command VARCHAR(15)) takes in a twitchStatistcs and returns the specified twitch statistics over available time.\nPossible commands: hoursWatched, avgViewers, peakViewers, avgChannels, peakChannels, hoursStreamed, gamesStreamed, activeAffiliate, activePartners")
+    print("- GetTwitchStats(command VARCHAR(15)) takes in a twitchStatistcs and returns the specified twitch statistics over available time.\nPossible commands: hoursWatched, avgViewers, peakViewers, avgChannels, peakChannels, hoursStreamed, gamesStreamed, activeAffiliate, activePartners")
     
 # Initialize database and cursors
 db = pymysql.connect(
@@ -108,11 +108,10 @@ try :
             except:
                print("Failed to plot results of GetStatCumulative")
 
-        elif (method_name == "getcovidtwitchstats"):
+        elif (method_name == "gettwitchstats"):
             command = input("Enter desired command: ")
             cursor.execute("CALL GetTwitchStats(%s)", command)
             results = cursor.fetchall()
-            print(results)
             printTable(results)
             try:
                plotSunburst(results)
