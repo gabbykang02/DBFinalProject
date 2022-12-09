@@ -28,7 +28,8 @@ def plotCumulative(result):
    colList = list(result.keys())
    print(1, len(colList))
    for idx in range(1, len(colList)):
-      plt.plot(result[colList[0]], result[colList[idx]])
+      if (colList[idx] != "dateofdata" and colList[idx] != "yearNum" and colList[idx] != "monthNum" and colList[idx] != "year" and colList[idx] != "month"):
+         plt.plot(result[colList[0]], result[colList[idx]])
    plt.legend(colList[1:(len(colList))])
    plt.show()
 
