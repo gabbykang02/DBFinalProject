@@ -60,24 +60,31 @@ DROP PROCEDURE IF EXISTS GetStatCumulative;
 DELIMITER //
 CREATE PROCEDURE GetStatCumulative ( country VARCHAR(100), startMonth INT, startYear INT, stopMonth INT, stopYear INT)
 BEGIN
-    SELECT dateofdata, new_cases, new_deaths
-    FROM CovidData
-    WHERE CovidData.location = country AND 
-        MONTH(CovidData.dateofdata) >= startMonth AND MONTH(CovidData.dateofdata) <= stopMonth AND
-        YEAR(CovidData.dateofdata) >= startYear AND YEAR(CovidData.dateofdata) <= stopYear;
-
-    SELECT num AS months, year, SUM(hoursWatched) AS hoursWatched, SUM(avgViewers) AS avgViewers, SUM(peakViewers) AS peakViewers,
-            SUM(avgChannels) AS avgChannels, SUM(peakChannels) AS peakChannels, SUM(hoursStreamed) AS hoursStreamed, 
-            SUM(gamesStreamed) AS gamesStreamed, SUM(activeAffiliates) AS activeAffiliates, SUM(activePartners) AS activePartners
-    FROM 
-        (SELECT *, REGEXP_SUBSTR(month,"[0-9]+") AS year
-        FROM TwitchStats JOIN Months 
-        ON TwitchStats.month like concat('%', Months.full, '%')) AS twitchMonths
-    WHERE twitchMonths.num >= startMonth AND twitchMonths.num <= stopMonth
-        AND twitchMonths.year >= startYear AND twitchMonths.num <= stopYear
-    GROUP BY num, year;
+    SELECT *
+    FROM
+        (SELECT dateofdata, new_cases, new_deaths, MONTH(dateofdata) monthNum, YEAR(dateofdata) As yearNum
+        FROM CovidData
+        WHERE CovidData.location = country AND 
+            MONTH(CovidData.dateofdata) >= startMonth AND MONTH(CovidData.dateofdata) <= stopMonth AND
+            YEAR(CovidData.dateofdata) >= startYear AND YEAR(CovidData.dateofdata) <= stopYear) AS covidTable
+        RIGHT OUTER JOIN
+        (SELECT num AS months, year, SUM(hoursWatched) AS hoursWatched, SUM(avgViewers) AS avgViewers, SUM(peakViewers) AS peakViewers,
+                SUM(avgChannels) AS avgChannels, SUM(peakChannels) AS peakChannels, SUM(hoursStreamed) AS hoursStreamed, 
+                SUM(gamesStreamed) AS gamesStreamed, SUM(activeAffiliates) AS activeAffiliates, SUM(activePartners) AS activePartners
+        FROM 
+            (SELECT *, REGEXP_SUBSTR(month,"[0-9]+") AS year
+            FROM TwitchStats JOIN Months 
+            ON TwitchStats.month like concat('%', Months.full, '%')) AS twitchMonths
+            WHERE twitchMonths.num >= startMonth AND twitchMonths.num <= stopMonth
+            AND twitchMonths.year >= startYear AND twitchMonths.year <= stopYear
+            GROUP BY num, year) AS statTable
+        ON covidTable.monthNum = statTable.months AND covidTable.yearNum = statTable.year;
 END //
 DELIMITER ;
+CALL GetStatCumulative("US", 2, 2020, 3, 2020);
+
+
+
 
 
 
