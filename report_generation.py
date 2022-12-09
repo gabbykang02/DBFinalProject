@@ -1,8 +1,8 @@
 import os
 import pymysql
 import pandas as pd
-#import matplotlib.pyplot as plt
-import termplotlib as plt
+import matplotlib.pyplot as plt
+
 try:
    import plotly.express as px
 except:
