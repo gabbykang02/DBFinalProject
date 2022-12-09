@@ -2,9 +2,13 @@ import os
 import pymysql
 import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.express as px
-# Initialize helper methods
 
+try:
+   import plotly.express as px
+except:
+   print("ERROR: Failed to install plotly (necessary for sunburst plots")
+   
+# Initialize helper methods
 # Print in table format
 def printTable(result, colList=None):
     # https://stackoverflow.com/questions/17330139/python-printing-a-dictionary-as-a-horizontal-table-with-headers
@@ -28,11 +32,13 @@ def plotCumulative(result):
    plt.legend(colList[1:(len(colList))])
    plt.show()
 
+# Plot sunburst results
 def plotSunburst(result):
    plt.figure
    fig = px.sunburst(result, path['year', 'month'], values = 'selected')
    fig.show()
 
+# Plot multiple sunburst results
 def plotCumulativeSunburst(result):
 
    colList = list(result.keys())
@@ -49,7 +55,7 @@ def printMethods():
     print("- GetAverageRatings(year INT) takes in a year and returns the average rating for film media released in that year.")
     print("- GetCovidPlatforms(year INT, month INT) takes in month/year and returns the average Metacritic rating for games relased in that month.")
     print("- GetStatCumulative(country VARCHAR(100), startMonth INT, startYear INT, stopMonth INT, stopYear INT) takes in a time period (specified by start/stop month/year and a country, plotting COVID cases and twitch stats overtime. The graph display is not interactable with the python script, but is interactable with ipynb")
-    print("- GetCovidTwitchStats(command VARCHAR(15)) takes in a twitchStatistcs and returns the specified twitch statistics over available time.\nPossible commands: hoursWatched, avgViewers, peakViewers, avgChannels, peakChannels, hoursStreamed, gamesStreamed, activeAffiliate, activePartners")
+    print("- GetCovidStats(command VARCHAR(15)) takes in a twitchStatistcs and returns the specified twitch statistics over available time.\nPossible commands: hoursWatched, avgViewers, peakViewers, avgChannels, peakChannels, hoursStreamed, gamesStreamed, activeAffiliate, activePartners")
     
 # Initialize database and cursors
 db = pymysql.connect(
@@ -65,23 +71,26 @@ try :
     print("Use \'q\' or \'quit\' to quit. Use \'h\' or \'help\' for info on methods")
     method_name = input("Enter method name: ")
     method_name = method_name.lower()
-    while (method_name != "q" or method_name != "quit"):
+    while (not (method_name == "q" or method_name == "quit")):
         if (method_name == "getmaxcovid"):
             country = input("Enter country name: ")
             cursor.execute("CALL GetMaxCovid(%s)", country)
             results = cursor.fetchall()
             printTable(results)
+
         elif (method_name == "getaverageratings"):
             year = input("Enter desired year: ")
             cursor.execute("CALL GetAverageRatings(%s)", int(year))
             results = cursor.fetchall()
             printTable(results)
+
         elif (method_name == "getcovidplatforms"):
             year = input("Enter desired year: ")
             month = input("Enter desired month: ")
             cursor.execute("CALL GetCovidPlatforms(%s, %s)", [year, month])
             results = cursor.fetchall()
             printTable(results)
+
         elif (method_name == "getstatcumulative"):
             country = input("Enter country name: ")
             startMonth = input("Enter start month: ")
@@ -97,6 +106,7 @@ try :
                plotCumulativeSunburst(results)
             except:
                print("Failed to plot results of GetStatCumulative")
+
         elif (method_name == "getcovidtwitchstats"):
             command = input("Enter desired command: ")
             cursor.execute("CALL GetTwitchStats(%s)", command)
@@ -107,8 +117,10 @@ try :
                plotSunburst(results)
             except:
                print("Failed to plotresults of GetTwitchStats")
+
         elif (method_name == "help" or method_name == "h"):
             printMethods()
+
         else:
             print("ERROR: Invalid Command")
         method_name = input("Enter procedure name: ")
