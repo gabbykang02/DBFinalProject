@@ -1,11 +1,27 @@
 DROP TABLE IF EXISTS CovidData;
-CREATE TABLE CovidData (
-    state VARCHAR(15),
-    country VARCHAR(20),
-    confirmed INT,
-    deaths INT,
-    recovered INT,
-    suspected INT
+CREATE TABLE CovidData(
+    iso_code VARCHAR(10), 
+    continent VARCHAR(100), 
+    location VARCHAR(100), 
+    dateofdata DATE, 
+    total_cases INT, 
+    new_cases INT, 
+    new_cases_smoothed FLOAT, 
+    total_deaths INT, 
+    new_deaths FLOAT, 
+    new_deaths_smoothed FLOAT, 
+    total_cases_per_million FLOAT, 
+    new_cases_per_million FLOAT, 
+    new_cases_smoothed_per_million FLOAT, 
+    total_deaths_per_million FLOAT, 
+    new_deaths_per_million FLOAT, 
+    new_deaths_smoothed_per_million FLOAT,
+    reproduction_rate FLOAT,
+    population_density FLOAT,
+    median_age FLOAT,
+    gdp_per_capita FLOAT,
+    life_expectancy FLOAT,
+    population INT
 );
 
 DROP TABLE IF EXISTS TitleInfo;
@@ -130,6 +146,26 @@ CREATE TABLE Metacritic (
     userscore FLOAT,
     summary NVARCHAR(6000)
 );
+
+DROP TABLE IF EXISTS Months;
+CREATE TABLE Months(
+    num INT,
+    full VARCHAR(20),
+    abrev VARCHAR(5)
+);
+
+INSERT INTO Months VALUES(1, "January", "Jan");
+INSERT INTO Months VALUES(2, "February", "Feb");
+INSERT INTO Months VALUES(3, "March", "Mar");
+INSERT INTO Months VALUES(4, "April", "Apr");
+INSERT INTO Months VALUES(5, "May", "May");
+INSERT INTO Months VALUES(6, "June", "Jun");
+INSERT INTO Months VALUES(7, "July", "Jul");
+INSERT INTO Months VALUES(8, "August", "Aug");
+INSERT INTO Months VALUES(9, "September", "Sep");
+INSERT INTO Months VALUES(10, "October", "Oct");
+INSERT INTO Months VALUES(11, "November", "Nov");
+INSERT INTO Months VALUES(12, "December", "Dec");
 
 DROP TABLE IF EXISTS GameSales;
 CREATE TABLE GameSales (

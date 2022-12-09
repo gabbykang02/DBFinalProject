@@ -95,7 +95,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS GetTwitchStats;
 DELIMITER //
-CREATE PROCEDURE GetTwitchStats(command VARCHAR(15))
+CREATE PROCEDURE GetTwitchStats(command VARCHAR(20))
 BEGIN
     SELECT num, abrev AS month, REGEXP_SUBSTR(month,"[0-9]+") AS year, 
     CASE command
