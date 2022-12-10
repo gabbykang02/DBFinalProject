@@ -1,3 +1,5 @@
+
+
 import os
 import pymysql
 import pandas as pd
@@ -57,13 +59,25 @@ def printMethods():
     print("- GetCovidPlatforms(year INT, month INT) takes in month/year and returns the average Metacritic rating for games relased in that month.")
     print("- GetStatCumulative(country VARCHAR(100), startMonth INT, startYear INT, stopMonth INT, stopYear INT) takes in a time period (specified by start/stop month/year and a country, plotting COVID cases and twitch stats overtime. The graph display is not interactable with the python script, but is interactable with ipynb")
     print("- GetTwitchStats(command VARCHAR(15)) takes in a twitchStatistcs and returns the specified twitch statistics over available time.\nPossible commands: hoursWatched, avgViewers, peakViewers, avgChannels, peakChannels, hoursStreamed, gamesStreamed, activeAffiliate, activePartners")
-    
+   
+    print("- GetGameScoresPerGenre(IN genre VARCHAR(20), IN year VARCHAR(5)) List the month, year, average scores and average number of Gamesales for GENRE games released after YEAR grouped by month.")
+    print("- getmostwatchedgame(IN p_year INT,IN p_continent VARCHAR(255), IN p_country VARCHAR(255) whats the most viewed game in twitch during the peak covid cases month in the country and continent in the input year)")
+    print("- getmovieoninputgenre(IN P_YEAR INT, IN P_GENRE VARCHAR(20)) Get movie recommendations based on genre, year input for all genres of top 10 ratings")
+    print("- getmoviesofall(IN P_YEAR INT) Get movie recommendations which have are released after the input year for all genres of top 2 highest ratings")
+    print("- gettopchannelinlanguage(IN p_language VARCHAR(255)) Get the individual top channel according to followers for given language ")
+    print("- GETTOPCHANNELSBYLANGUAGE() Get the individual top channel for each language which has been watched the most")
+    print("- gettopwatchedgames(IN p_year INT) gives the top most viewed games in twitch during the peak covid cases month in the input year")
+
 # Initialize database and cursors
 db = pymysql.connect(
     host = "dbase.cs.jhu.edu",
     user = "22fa_gkang9",
     password = "o8sVqdtzqE",
-    database = "22fa_gkang9_db")
+    database = "22fa_gkang9_db"
+    #user = "22fa_vtiyyal1",
+    #password = "mysqlpass",
+    #database = "22fa_vtiyyal1_db"
+    )
 cursor = db.cursor(pymysql.cursors.DictCursor)
 
 
@@ -117,6 +131,55 @@ try :
                plotSunburst(results)
             except:
                print("Failed to plotresults of GetTwitchStats")
+        
+        elif (method_name == "getgamescorespergenre"):
+            genre = input("Enter desired genre: ")
+            year = input("Enter desired year: ")
+            cursor.execute("CALL GetGameScoresPerGenre(%s, %s)", [genre, year])
+            results = cursor.fetchall()
+            printTable(results)
+            
+        elif (method_name == "getmostwatchedgame"):
+            year = input("Enter desired year: ")
+            continent = input("Enter desired continent: ")
+            country = input("Enter desired country: ")
+            cursor.execute("CALL getmostwatchedgame(%s, %s, %s)", [year, continent, country])
+            results = cursor.fetchall()
+            printTable(results)
+
+        elif (method_name == "getmovieoninputgenre"):
+            year = input("Enter desired year: ")
+            genre = input("Enter desired genre: ")
+            cursor.execute("CALL getmovieoninputgenre(%s, %s)", [year, genre])
+            results = cursor.fetchall()
+            printTable(results)
+
+        elif (method_name == "getmoviesofall"):
+            year = input("Enter desired year: ")
+            cursor.execute("CALL getmoviesofall(%s)", year)
+            results = cursor.fetchall()
+            printTable(results)
+
+        elif (method_name == "gettopchannelinlanguage"):
+            language = input("Enter desired language: ")
+            cursor.execute("CALL gettopchannelinlanguage(%s)", language)
+            results = cursor.fetchall()
+            printTable(results)
+
+        elif (method_name == "gettopchannelsbylanguage"):
+            cursor.execute("CALL GETTOPCHANNELSBYLANGUAGE()")
+            results = cursor.fetchall()
+            printTable(results)
+            results = cursor.fetchall()
+            printTable(results)
+            
+
+        elif (method_name == "gettopwatchedgames"):
+            year = input("Enter desired year: ")
+            cursor.execute("CALL gettopwatchedgames(%s)", year)
+            results = cursor.fetchall()
+            printTable(results)
+
 
         elif (method_name == "help" or method_name == "h"):
             printMethods()
@@ -136,3 +199,4 @@ try:
     print("Closed connections and executed all queries successfully")
 except:
     print("Error occured in querying, connection already closed")
+
