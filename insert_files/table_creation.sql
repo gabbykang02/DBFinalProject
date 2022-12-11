@@ -112,6 +112,18 @@ CREATE TABLE TwitchStats (
     PRIMARY KEY(month)
 );
 
+DROP TABLE IF EXISTS TwitchGlobal;
+CREATE TABLE TwitchGlobal (
+    year INT,
+    month INT,
+    hoursWatched BIGINT,
+    avgViewers INT,
+    peakViewers INT,
+    streams INT,
+    avgChannels INT,
+    gamesStreamed INT
+);
+
 DROP TABLE IF EXISTS TwitchWatched;
 CREATE TABLE TwitchWatched (
     channel VARCHAR(70) NOT NULL,
