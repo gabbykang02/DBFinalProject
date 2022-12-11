@@ -8,4 +8,4 @@ Run all sql files in insert_files folder in order to populate the database. The 
 
 **report_generation.py** offers command line terminal based interaction with the database. Modify login information in the pymysql command to connect to a specific database.
 
-**report_generation.ipynbb** offers notebook based inteeraction with the database. In order to utilize interactive charts in python, you must use ipynb for GetStatCumulative and GetTwitchStats stored procedures.
+**report_generation.ipynb** offers notebook based inteeraction with the database. In order to utilize interactive charts in python, you must use ipynb for GetStatCumulative and GetTwitchStats stored procedures.
