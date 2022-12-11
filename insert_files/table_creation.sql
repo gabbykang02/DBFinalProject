@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS CovidData;
+
 CREATE TABLE CovidData(
-    iso_code VARCHAR(10), 
+    icode VARCHAR(10) not null, 
     continent VARCHAR(100), 
     location VARCHAR(100), 
     dateofdata DATE, 
@@ -15,14 +16,14 @@ CREATE TABLE CovidData(
     new_cases_smoothed_per_million FLOAT, 
     total_deaths_per_million FLOAT, 
     new_deaths_per_million FLOAT, 
-    new_deaths_smoothed_per_million FLOAT,
-    reproduction_rate FLOAT,
-    population_density FLOAT,
-    median_age FLOAT,
-    gdp_per_capita FLOAT,
-    life_expectancy FLOAT,
-    population INT,
-    PRIMARY KEY(iso_code, continent, location, dateofdata)
+    new_deaths_smoothed_per_million FLOAT, 
+    reproduction_rate FLOAT, 
+    population_density FLOAT, 
+    median_age FLOAT, 
+    gdp_per_capita FLOAT, 
+    life_expectancy FLOAT, 
+    population BIGINT
+
 );
 
 DROP TABLE IF EXISTS TitleInfo;
@@ -35,8 +36,7 @@ CREATE TABLE TitleInfo (
     startYear INT,
     endYear INT,
     runTime INT,
-    genres VARCHAR(100),
-    PRIMARY KEY (tconst)
+    genres VARCHAR(100)
 );
 
 DROP TABLE IF EXISTS TitleTranslated;
@@ -47,16 +47,14 @@ CREATE TABLE TitleTranslated(
     region VARCHAR(20),
     language VARCHAR(20),
     type VARCHAR(20),
-    isOriginalTitle BOOLEAN NOT NULL,
-    PRIMARY KEY (tconst)
+    isOriginalTitle BOOLEAN NOT NULL
 );
 
 DROP TABLE IF EXISTS Crew;
 CREATE TABLE Crew (
     tconst VARCHAR(10) NOT NULL,
     person VARCHAR(4500) NOT NULL,
-    role VARCHAR(4500),
-    PRIMARY KEY (tconst)
+    role VARCHAR(4500)
 );
 
 DROP TABLE IF EXISTS Episodes;
@@ -74,8 +72,7 @@ CREATE TABLE Principals (
     nconst VARCHAR(10) NOT NULL,
     ordering INT,
     job VARCHAR(200),
-    characters VARCHAR(100),
-    PRIMARY KEY (tconst)
+    characters VARCHAR(100)
 );
 
 DROP TABLE IF EXISTS Ratings;
@@ -112,6 +109,18 @@ CREATE TABLE TwitchStats (
     PRIMARY KEY(month)
 );
 
+DROP TABLE IF EXISTS TwitchGlobal;
+CREATE TABLE TwitchGlobal (
+    year INT,
+    month INT,
+    hoursWatched BIGINT,
+    avgViewers INT,
+    peakViewers INT,
+    streams INT,
+    avgChannels INT,
+    gamesStreamed INT
+);
+
 DROP TABLE IF EXISTS TwitchWatched;
 CREATE TABLE TwitchWatched (
     channel VARCHAR(70) NOT NULL,
@@ -129,16 +138,19 @@ CREATE TABLE TwitchWatched (
 
 DROP TABLE IF EXISTS TwitchGames;
 CREATE TABLE TwitchGames (
-    game VARCHAR(50) NOT NULL,
-    watchTime BIGINT,
-    streamTime BIGINT,
-    peakViewers INT,
-    peakChannels INT,
-    streamers VARCHAR(50),
+    `rank` INT,
+    game NVARCHAR(100) NOT NULL,
+    month INT,
+    year INT,
+    hoursWatched BIGINT,
+    hoursStreamed VARCHAR(50),
+    peakViewers BIGINT,
+    peakChannels BIGINT,
+    streamers INT,
     avgViewers INT,
     avgChannels INT,
-    avgViewRatio INT,
-    PRIMARY KEY(game)
+    avgViewRatio INT
+	
 );
 
 
@@ -149,29 +161,8 @@ CREATE TABLE Metacritic (
     platform VARCHAR(20),
     date VARCHAR(20),
     userscore FLOAT,
-    summary NVARCHAR(6000),
-    PRIMARY KEY(game, platform)
+    summary NVARCHAR(4000)
 );
-
-DROP TABLE IF EXISTS Months;
-CREATE TABLE Months(
-    num INT,
-    full VARCHAR(20),
-    abrev VARCHAR(5)
-);
-
-INSERT INTO Months VALUES(1, "January", "Jan");
-INSERT INTO Months VALUES(2, "February", "Feb");
-INSERT INTO Months VALUES(3, "March", "Mar");
-INSERT INTO Months VALUES(4, "April", "Apr");
-INSERT INTO Months VALUES(5, "May", "May");
-INSERT INTO Months VALUES(6, "June", "Jun");
-INSERT INTO Months VALUES(7, "July", "Jul");
-INSERT INTO Months VALUES(8, "August", "Aug");
-INSERT INTO Months VALUES(9, "September", "Sep");
-INSERT INTO Months VALUES(10, "October", "Oct");
-INSERT INTO Months VALUES(11, "November", "Nov");
-INSERT INTO Months VALUES(12, "December", "Dec");
 
 DROP TABLE IF EXISTS GameSales;
 CREATE TABLE GameSales (
@@ -187,6 +178,5 @@ CREATE TABLE GameSales (
     jpSales INT,
     otherSales INT,
     releaseDate VARCHAR(20),
-    lastUpdate VARCHAR(20),
-    PRIMARY KEY (game, platform)
+    lastUpdate VARCHAR(20)
 );
