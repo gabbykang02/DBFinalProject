@@ -1,5 +1,3 @@
-
-
 import os
 import pymysql
 import pandas as pd
@@ -32,13 +30,15 @@ def plotCumulative(result):
    for idx in range(1, len(colList)):
       if (colList[idx] != "dateofdata" and colList[idx] != "yearNum" and colList[idx] != "monthNum" and colList[idx] != "year" and colList[idx] != "month"):
          plt.plot(result[colList[0]], result[colList[idx]])
-   plt.legend(colList[1:(len(colList))])
-   plt.show(block=True)
-
+   plt.legend(colList[1:(len(colList))], fontsize=50)
+   plt.xticks(fontsize=30)
+   plt.xlabel("Date", fontsize=50)
+   plt.ylabel("Magnitude", fontsize=50)
+   plt.show()
 # Plot sunburst results
 def plotSunburst(result):
    plt.figure
-   fig = px.sunburst(result, path['year', 'month'], values = 'selected')
+   fig = px.sunburst(result, path=['year', 'month'], values = 'selected')
    fig.show()
 
 # Plot multiple sunburst results
@@ -48,7 +48,7 @@ def plotCumulativeSunburst(result):
    for idx in range(1, len(colList)):
       if (colList[idx] != "dateofdata" and colList[idx] != "yearNum" and colList[idx] != "monthNum" and colList[idx] != "year" and colList[idx] != "month"):
          plt.figure
-         fig = px.sunburst(result, path['yearNum', 'monthNum', 'dateofdata'], values = result[colList[idx]], title=colList[idx])
+         fig = px.sunburst(result, path=['yearNum', 'monthNum', 'dateofdata'], values = result[colList[idx]], title=colList[idx])
          fig.show()
    
 # Print available methods
@@ -63,9 +63,7 @@ def printMethods():
     print("- GetGameScoresPerGenre(IN genre VARCHAR(20), IN year VARCHAR(5)) List the month, year, average scores and average number of Gamesales for GENRE games released after YEAR grouped by month.")
     print("- getmostwatchedgame(IN p_year INT,IN p_continent VARCHAR(255), IN p_country VARCHAR(255) whats the most viewed game in twitch during the peak covid cases month in the country and continent in the input year)")
     print("- getmovieoninputgenre(IN P_YEAR INT, IN P_GENRE VARCHAR(20)) Get movie recommendations based on genre, year input for all genres of top 10 ratings")
-    print("- getmoviesofall(IN P_YEAR INT) Get movie recommendations which have are released after the input year for all genres of top 2 highest ratings")
     print("- gettopchannelinlanguage(IN p_language VARCHAR(255)) Get the individual top channel according to followers for given language ")
-    print("- GETTOPCHANNELSBYLANGUAGE() Get the individual top channel for each language which has been watched the most")
     print("- gettopwatchedgames(IN p_year INT) gives the top most viewed games in twitch during the peak covid cases month in the input year")
 
 # Initialize database and cursors
@@ -154,25 +152,11 @@ try :
             results = cursor.fetchall()
             printTable(results)
 
-        elif (method_name == "getmoviesofall"):
-            year = input("Enter desired year: ")
-            cursor.execute("CALL getmoviesofall(%s)", year)
-            results = cursor.fetchall()
-            printTable(results)
-
         elif (method_name == "gettopchannelinlanguage"):
             language = input("Enter desired language: ")
             cursor.execute("CALL gettopchannelinlanguage(%s)", language)
             results = cursor.fetchall()
-            printTable(results)
-
-        elif (method_name == "gettopchannelsbylanguage"):
-            cursor.execute("CALL GETTOPCHANNELSBYLANGUAGE()")
-            results = cursor.fetchall()
-            printTable(results)
-            results = cursor.fetchall()
-            printTable(results)
-            
+            printTable(results)            
 
         elif (method_name == "gettopwatchedgames"):
             year = input("Enter desired year: ")
